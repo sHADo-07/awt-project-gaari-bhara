@@ -1,0 +1,19 @@
+# Optional: PostgreSQL for development with one command.
+#   docker compose -f docker-compose.dev.yml up -d
+# (The original docker-compose.yml is for deploying the app, so it is left as it is.)
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gaari-bhara-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gaari
+      POSTGRES_PASSWORD: gaari_dev_password
+      POSTGRES_DB: gaari_bhara
+    ports:
+      - "5432:5432"
+    volumes:
+      - gaari-bhara-data:/var/lib/postgresql/data
+
+volumes:
+  gaari-bhara-data:
