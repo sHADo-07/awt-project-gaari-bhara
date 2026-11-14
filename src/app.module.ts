@@ -13,6 +13,7 @@ import { CatalogModule } from "@/modules/catalog/catalog.module";
 import { PostsModule } from "@/modules/post/posts.module";
 import { ConversationModule } from "@/modules/chat/conversation.module";
 import { MessageModule } from "@/modules/chat/message.module";
+import { ConversationReadModule } from "@/modules/chat/conversation_reads.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MessageModule } from "@/modules/chat/message.module";
     CatalogModule,
     PostsModule,
     ConversationModule,
+    ConversationReadModule,
     MessageModule,
 
     ConfigModule.forRoot({
