@@ -33,7 +33,7 @@ export class ConversationController {
   }
 
   @Patch(":id")
-  async updateProduct(
+  async updateConversation(
     @Param("id") id: string,
     @Body() conversationDto: UpdateLastMessageTimestampDto,
   ) {
@@ -41,7 +41,7 @@ export class ConversationController {
   }
 
   @Delete(":id")
-  async deleteProduct(@Param("id") id: string) {
+  async deleteConversation(@Param("id") id: string) {
     return await this.productService.deleteConversation(id);
   }
 }
