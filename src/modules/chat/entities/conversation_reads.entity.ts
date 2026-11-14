@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "conversation_reads" })
 export class ConversationRead {
-  @PrimaryGeneratedColumn("uuid")
+  @Column()
+  @PrimaryColumn()
   conversation_id!: string;
 
   @Column()
