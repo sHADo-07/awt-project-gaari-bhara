@@ -26,7 +26,8 @@
     "seeder:run": "node dist/seeder",
     "seeder:refresh": "node dist/seeder --refresh",
     "seeder:run:dev": "ts-node -r tsconfig-paths/register src/seeder",
-    "seeder:refresh:dev": "ts-node -r tsconfig-paths/register src/seeder --refresh"
+    "seeder:refresh:dev": "ts-node -r tsconfig-paths/register src/seeder --refresh",
+    "seed:posts": "ts-node -r tsconfig-paths/register src/database/seeders/seed-demo-posts.ts"
   },
   "dependencies": {
     "@nest-lab/throttler-storage-redis": "^1.1.0",
