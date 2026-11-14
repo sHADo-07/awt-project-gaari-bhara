@@ -9,6 +9,8 @@ import { InMemoryCacheModule } from "@/providers/cache/in-memory/in-memory-cache
 import { MailModule } from "@/mails/mail.module";
 import { UsersModule } from "@/modules/users/users.module";
 import { AuthModule } from "@/modules/auth/auth.module";
+import { CatalogModule } from "@/modules/catalog/catalog.module";
+import { PostsModule } from "@/modules/post/posts.module";
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { AuthModule } from "@/modules/auth/auth.module";
     MailModule,
     UsersModule,
     AuthModule,
+    CatalogModule,
+    PostsModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
