@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Matches } from "class-validator";
 import { Column } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -9,6 +9,10 @@ export class CreateConversationDto {
   })
   @IsString()
   @IsNotEmpty()
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    { message: "Invalid user_low_id format" },
+  )
   user_low_id!: string;
 
   @ApiProperty({
@@ -17,13 +21,22 @@ export class CreateConversationDto {
   })
   @IsString()
   @IsNotEmpty()
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    { message: "Invalid user_high_id format" },
+  )
   user_high_id!: string;
+
   @ApiProperty({
     description: "ID of the post",
     example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   })
   @IsString()
   @IsNotEmpty()
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    { message: "Invalid post_id format" },
+  )
   post_id!: string;
 
   @IsOptional()
@@ -34,6 +47,10 @@ export class CreateConversationDto {
   @Column({ type: "timestamptz" })
   last_message_at?: Date = new Date();
 
+  @ApiProperty({
+    description: "Timestamp of when the conversation was created",
+    example: "2023-01-01T00:00:00.000Z",
+  })
   @IsOptional()
   @Column({ type: "timestamptz" })
   created_at?: Date = new Date();

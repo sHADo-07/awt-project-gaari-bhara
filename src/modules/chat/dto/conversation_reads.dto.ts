@@ -1,4 +1,10 @@
-import { IsDate, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from "class-validator";
 import { Column } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -8,6 +14,10 @@ export class CreateConversationReadDto {
     description: "UUID of the conversation",
     example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   })
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    { message: "Invalid conversation ID format" },
+  )
   @IsNotEmpty({ message: "No conversation ID provided" })
   conversation_id!: string;
 
@@ -16,6 +26,10 @@ export class CreateConversationReadDto {
     example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   })
   @IsString()
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    { message: "Invalid user ID format" },
+  )
   @IsNotEmpty({ message: "No user ID provided" })
   user_id!: string;
 
@@ -23,6 +37,10 @@ export class CreateConversationReadDto {
     description: "UUID of the last read message",
     example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   })
+  @Matches(
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+    { message: "Invalid last read message ID format" },
+  )
   @IsString()
   @IsNotEmpty({ message: "no message id provided" })
   last_read_message_id!: string;
