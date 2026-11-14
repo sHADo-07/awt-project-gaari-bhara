@@ -12,23 +12,23 @@ import {
   UpdateConversationReadDto,
 } from "@/modules/chat/dto/conversation_reads.dto";
 
-@Controller("ConversationReads_reads")
+@Controller("conversation_reads")
 export class ConversationReadsController {
-  constructor(private readonly productService: ConversationReadService) {}
+  constructor(private readonly conversationReadService: ConversationReadService) {}
 
   @Post()
   async createConversationReads(@Body() dto: CreateConversationReadDto) {
-    return await this.productService.createConversationRead(dto);
+    return await this.conversationReadService.createConversationRead(dto);
   }
 
   @Get()
   async getConversationReads() {
-    return await this.productService.getConversationReads();
+    return await this.conversationReadService.getConversationReads();
   }
 
   @Get(":id")
   async getConversationReadsById(@Param("id") id: string) {
-    return await this.productService.getConversationReadById(id);
+    return await this.conversationReadService.getConversationReadById(id);
   }
 
   @Patch(":id")
@@ -36,6 +36,6 @@ export class ConversationReadsController {
     @Param("id") id: string,
     @Body() ConversationReadsDto: UpdateConversationReadDto,
   ) {
-    return await this.productService.updateConversationRead(id, ConversationReadsDto);
+    return await this.conversationReadService.updateConversationRead(id, ConversationReadsDto);
   }
 }

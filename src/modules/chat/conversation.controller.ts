@@ -15,21 +15,21 @@ import {
 
 @Controller("conversations")
 export class ConversationController {
-  constructor(private readonly productService: ConversationService) {}
+  constructor(private readonly conversationService: ConversationService) {}
 
   @Post()
   async createConversation(@Body() conversationDto: CreateConversationDto) {
-    return await this.productService.createConversation(conversationDto);
+    return await this.conversationService.createConversation(conversationDto);
   }
 
   @Get()
   async getConversations() {
-    return await this.productService.getConversations();
+    return await this.conversationService.getConversations();
   }
 
   @Get(":id")
   async getConversationById(@Param("id") id: string) {
-    return await this.productService.getConversationById(id);
+    return await this.conversationService.getConversationById(id);
   }
 
   @Patch(":id")
@@ -37,11 +37,11 @@ export class ConversationController {
     @Param("id") id: string,
     @Body() conversationDto: UpdateLastMessageTimestampDto,
   ) {
-    return await this.productService.updateConversation(id, conversationDto);
+    return await this.conversationService.updateConversation(id, conversationDto);
   }
 
   @Delete(":id")
   async deleteConversation(@Param("id") id: string) {
-    return await this.productService.deleteConversation(id);
+    return await this.conversationService.deleteConversation(id);
   }
 }
