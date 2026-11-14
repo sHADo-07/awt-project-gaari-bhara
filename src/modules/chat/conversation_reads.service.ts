@@ -70,4 +70,18 @@ export class ConversationReadService {
       throw error;
     }
   }
+
+  async deleteConversationRead(conversation_id: string) {
+    try {
+      const conversationRead = await this.conversationReadRepository.findOne({
+        where: { conversation_id },
+      });
+      if (!conversationRead) {
+        throw new NotFoundException("Conversation read with ID not found");
+      }
+      return await this.conversationReadRepository.delete({ conversation_id });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
