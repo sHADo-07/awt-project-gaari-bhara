@@ -12,7 +12,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Roles } from "@/common/decorators/roles.decorator";
 import { Role } from "@/common/enums/role.enum";
-import { AuthGuard } from "@/modules/auth/guards/auth.guard";
+import { AuthGuard } from "@/common/guard/auth.guard";
 import { RolesGuard } from "@/common/guard/roles.guard";
 import { HidePostDto } from "@/modules/post/dto/hide-post.dto";
 import { AdminPostsQueryDto } from "@/modules/post/dto/feed-query.dto";

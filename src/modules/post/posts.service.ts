@@ -253,10 +253,10 @@ export class PostsService {
   }
 
   private assertCanCreateType(user: AuthUser, type: PostType) {
-    if (type === PostType.OFFER && user.role !== Role.OWNER) {
+    if (type === PostType.OFFER && !user.roles.includes(Role.OWNER)) {
       throw new ForbiddenException("Only an Owner can create an OFFER post");
     }
-    if (type === PostType.REQUEST && user.role !== Role.RENTER) {
+    if (type === PostType.REQUEST && !user.roles.includes(Role.RENTER)) {
       throw new ForbiddenException("Only a Renter can create a REQUEST post");
     }
   }

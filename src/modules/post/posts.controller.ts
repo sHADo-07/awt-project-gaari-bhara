@@ -23,7 +23,7 @@ import {
 } from "@nestjs/swagger";
 import { memoryStorage } from "multer";
 import { CurrentUser } from "@/common/decorators/current-user.decorator";
-import { AuthGuard } from "@/modules/auth/guards/auth.guard";
+import { AuthGuard } from "@/common/guard/auth.guard";
 import { AuthUser } from "@/common/interfaces/auth-user.interface";
 import { CreatePostDto } from "@/modules/post/dto/create-post.dto";
 import { FeedQueryDto, MyPostsQueryDto } from "@/modules/post/dto/feed-query.dto";
