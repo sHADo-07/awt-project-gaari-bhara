@@ -5,6 +5,7 @@ import { CreateLookups1730000000002 } from "../src/database/migrations/173000000
 import { CreatePosts1730000000003 } from "../src/database/migrations/1730000000003-CreatePosts";
 import { CreateRentsAndReviews1730000000004 } from "../src/database/migrations/1730000000004-CreateRentsAndReviews";
 import { CreateChat1730000000005 } from "../src/database/migrations/1730000000005-CreateChat";
+import { AddPostModerationAndImageConstraints1730000000007 } from "../src/database/migrations/1730000000007-AddPostModerationAndImageConstraints";
 
 /**
  * Database checks from the manual (Part 6). They prove that the RULES live in the database,
@@ -96,6 +97,7 @@ describe("Database rules (migrations from an empty database)", () => {
         CreatePosts1730000000003,
         CreateRentsAndReviews1730000000004,
         CreateChat1730000000005,
+        AddPostModerationAndImageConstraints1730000000007,
       ],
     });
     await ds.initialize();
