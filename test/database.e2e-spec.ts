@@ -102,7 +102,7 @@ describe("Database rules (migrations from an empty database)", () => {
     });
     await ds.initialize();
     try {
-      for (let i = 0; i < 5; i++) await ds.undoLastMigration();
+      for (let i = 0; i < 6; i++) await ds.undoLastMigration();
       const left = await ds.query(`SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name <> 'migrations'`);
       expect(left).toHaveLength(0);
       const types = await ds.query(`SELECT typname FROM pg_type t JOIN pg_namespace n ON n.oid=t.typnamespace WHERE n.nspname='public' AND t.typtype='e'`);
@@ -160,7 +160,10 @@ describe("Database rules (migrations from an empty database)", () => {
       const p = await post(a);
       const row = (await db.query(`SELECT status, rent_status FROM posts WHERE id = $1`, [p]))[0];
       expect(row).toEqual({ status: "ACTIVE", rent_status: "OPEN" });
-      await db.query(`INSERT INTO post_images (post_id, file_path) VALUES ($1, '/uploads/a.jpg'), ($1, '/uploads/b.jpg')`, [p]);
+      await db.query(
+        `INSERT INTO post_images (post_id, file_path, position) VALUES ($1, '/uploads/a.jpg', 0), ($1, '/uploads/b.jpg', 1)`,
+        [p],
+      );
       await db.query(`DELETE FROM posts WHERE id = $1`, [p]);
       expect((await db.query(`SELECT count(*)::int AS n FROM post_images WHERE post_id = $1`, [p]))[0].n).toBe(0);
     });
