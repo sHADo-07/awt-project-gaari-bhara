@@ -11,6 +11,9 @@ import { UsersModule } from "@/modules/users/users.module";
 import { AuthModule } from "@/modules/auth/auth.module";
 import { CatalogModule } from "@/modules/catalog/catalog.module";
 import { PostsModule } from "@/modules/post/posts.module";
+import { ConversationModule } from "@/modules/chat/conversation.module";
+import { MessageModule } from "@/modules/chat/message.module";
+import { ConversationReadModule } from "@/modules/chat/conversation_reads.module";
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { PostsModule } from "@/modules/post/posts.module";
     AuthModule,
     CatalogModule,
     PostsModule,
+    ConversationModule,
+    ConversationReadModule,
+    MessageModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
