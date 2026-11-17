@@ -6,15 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from "@nestjs/common";
+import { ApiBearerAuth } from "@nestjs/swagger";
 import { ConversationService } from "@/modules/chat/conversation.service";
 import {
   CreateConversationDto,
   UpdateLastMessageTimestampDto,
 } from "@/modules/chat/dto/conversation.dto";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "@/common/guard";
 
 @ApiTags("conversation")
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller("conversations")
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
