@@ -15,6 +15,8 @@ import { ConversationModule } from "@/modules/chat/conversation.module";
 import { MessageModule } from "@/modules/chat/message.module";
 import { ConversationReadModule } from "@/modules/chat/conversation_reads.module";
 import { RentModule } from "@/modules/rent/rent.module";
+import { RentStatusHistoryModule } from "@/modules/rent_status_history/rent-status-history.module";
+import { ReviewModule } from "@/modules/review/review.module";
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { RentModule } from "@/modules/rent/rent.module";
     ConversationReadModule,
     MessageModule,
     RentModule,
+    RentStatusHistoryModule,
+    ReviewModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
