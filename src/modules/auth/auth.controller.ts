@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, Patch, Post, Req, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "@/common/guard";
 import { CurrentUser } from "@/common/decorators";
@@ -23,7 +31,9 @@ export class AuthController {
 
   @Post("login")
   @HttpCode(200)
-  @ApiOperation({ summary: "Log in with email and password. Returns a Bearer token." })
+  @ApiOperation({
+    summary: "Log in with email and password. Returns a Bearer token.",
+  })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
@@ -40,8 +50,18 @@ export class AuthController {
   @Patch("password")
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: "Change my password. This token stops working, so log in again." })
-  changePassword(@CurrentUser() user: AuthUser, @Req() req: IRequest, @Body() dto: ChangePasswordDto) {
-    return this.authService.changePassword(user.id, getBearerToken(req) as string, dto);
+  @ApiOperation({
+    summary: "Change my password. This token stops working, so log in again.",
+  })
+  changePassword(
+    @CurrentUser() user: AuthUser,
+    @Req() req: IRequest,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(
+      user.id,
+      getBearerToken(req) as string,
+      dto,
+    );
   }
 }

@@ -25,22 +25,20 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          // Swagger UI needs 'unsafe-inline' to function correctly
+
           scriptSrc: ["'self'", "'unsafe-inline'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", "data:", "validator.swagger.io"], // Allow Swagger images
+          imgSrc: ["'self'", "data:", "validator.swagger.io"],
           connectSrc: ["'self'"],
         },
       },
-      // This policy can block Swagger assets, so we disable it for now
+
       crossOriginEmbedderPolicy: false,
     }),
   );
 
-  // 1. Request logger, validation pipe and error format
   setupApp(app);
 
-  // 2. Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle("Gaari Bhara API")
     .setVersion("1.0")
@@ -49,12 +47,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
 
-  // 3. Cookie Parser
   const cookieSecret =
     process.env.COOKIE_SECRET || "fallback-secret-dont-use-in-prod";
   app.use(cookieParser(cookieSecret));
 
-  // 4. CORS Configuration
   const allowedOrigins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(",").map((origin) => origin.trim())
     : [];

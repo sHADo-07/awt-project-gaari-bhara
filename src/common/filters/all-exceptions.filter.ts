@@ -10,13 +10,6 @@ import { Request, Response } from "express";
 import { STATUS_CODES } from "http";
 import { QueryFailedError } from "typeorm";
 
-/**
- * One error shape for the whole API:
- *   { statusCode, error, message, path, timestamp }
- * - Errors we throw (NotFoundException, ConflictException ...) keep their status and message.
- * - Database errors become a clear 409 or 400 (for example a duplicate email).
- * - Anything unknown becomes a plain 500. The stack trace is only written in the server log.
- */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger("Exception");
@@ -27,13 +20,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const res = ctx.getResponse<Response>();
 
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message: string | string[] = "Something went wrong. Please try again later.";
+    let message: string | string[] =
+      "Something went wrong. Please try again later.";
 
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
-      const body = exception.getResponse();
-      message =
-        typeof body === "string" ? body : ((body as any).message ?? exception.message);
+      message = this.messageOf(exception);
     } else if (exception instanceof QueryFailedError) {
       const known = this.fromDatabaseError(exception);
       if (known) {
@@ -55,21 +47,41 @@ export class AllExceptionsFilter implements ExceptionFilter {
     });
   }
 
-  /** PostgreSQL error codes -> HTTP answers. */
+  private messageOf(exception: HttpException): string | string[] {
+    const body = exception.getResponse();
+    if (typeof body === "string") return body;
+    return (
+      (body as { message?: string | string[] }).message ?? exception.message
+    );
+  }
+
   private fromDatabaseError(error: QueryFailedError) {
     const code = (error.driverError as { code?: string })?.code;
     switch (code) {
-      case "23505": // unique violation
-        return { statusCode: HttpStatus.CONFLICT, message: "This value already exists" };
-      case "23503": // foreign key violation
+      case "23505":
+        return {
+          statusCode: HttpStatus.CONFLICT,
+          message: "This value already exists",
+        };
+      case "23503":
         return /update or delete on table/i.test(error.message)
-          ? { statusCode: HttpStatus.CONFLICT, message: "This record is still used by other records, so it cannot be deleted" }
-          : { statusCode: HttpStatus.BAD_REQUEST, message: "A related record does not exist" };
-      case "23P01": // exclusion violation (two rents on the same days)
-        return { statusCode: HttpStatus.CONFLICT, message: "These dates are already taken" };
-      case "23514": // check violation
-      case "23502": // not null violation
-      case "22P02": // invalid text representation (bad uuid or enum)
+          ? {
+              statusCode: HttpStatus.CONFLICT,
+              message:
+                "This record is still used by other records, so it cannot be deleted",
+            }
+          : {
+              statusCode: HttpStatus.BAD_REQUEST,
+              message: "A related record does not exist",
+            };
+      case "23P01":
+        return {
+          statusCode: HttpStatus.CONFLICT,
+          message: "These dates are already taken",
+        };
+      case "23514":
+      case "23502":
+      case "22P02":
         return { statusCode: HttpStatus.BAD_REQUEST, message: "Invalid input" };
       default:
         return null;

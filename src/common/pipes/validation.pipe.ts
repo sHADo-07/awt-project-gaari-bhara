@@ -10,7 +10,6 @@ import { plainToInstance } from "class-transformer";
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   constructor(
-    // whitelist removes unknown fields. forbidNonWhitelisted rejects them with a 400.
     private options: ValidatorOptions = {
       whitelist: true,
       forbidNonWhitelisted: true,
@@ -23,7 +22,6 @@ export class ValidationPipe implements PipeTransform<any> {
     const object = plainToInstance(metatype, value ?? {});
     const errors = await validate(object, this.options);
     if (errors.length > 0) {
-      // One readable line for every broken rule, for example "email must be an email".
       const messages = errors.flatMap((error) =>
         Object.values(error.constraints ?? {}),
       );

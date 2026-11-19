@@ -11,7 +11,6 @@ export const getCurrentUser = (req: IRequest) => {
   return req.user;
 };
 
-/** Reads the token from the header  Authorization: Bearer <token> */
 export const getBearerToken = (req: IRequest) => {
   const bearerToken = req.headers.authorization;
   return bearerToken?.split("Bearer ")[1] || bearerToken?.split(" ")[1];

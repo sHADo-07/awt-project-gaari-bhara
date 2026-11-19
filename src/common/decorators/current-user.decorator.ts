@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 
-/** Gives the signed-in user to a route:  me(@CurrentUser() user: AuthUser) */
 export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
     const req: IRequest = context.switchToHttp().getRequest();
