@@ -59,7 +59,7 @@ const env = (() => {
         {},
       ),
     );
-  } catch {
+  } catch (error) {
     if (error instanceof ZodError)
       throw new Error(`ENV ${fromZodError(error).message}`);
     else throw new Error(`ENV ${error}`);
