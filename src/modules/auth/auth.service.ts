@@ -34,10 +34,7 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const passwordHash = await bcrypt.hash(
-      dto.password,
-      appConfig.recommended_bycrypt_rounds,
-    );
+    const passwordHash = await this.hashPassword(dto.password);
     const user = await this.usersService.create({
       role: dto.role,
       fullName: dto.fullName,
@@ -57,11 +54,7 @@ export class AuthService {
 
     if (!user || !passwordOk)
       throw new UnauthorizedException("Invalid email or password");
-    if (user.status === UserStatus.SUSPENDED) {
-      throw new ForbiddenException(
-        "Your account is suspended. Please contact an admin.",
-      );
-    }
+    this.ensureActive(user.status);
 
     const accessToken = await this.jwtService.signAsync({
       sub: user.id,
@@ -91,11 +84,7 @@ export class AuthService {
       throw new UnauthorizedException(
         "You are not authenticated, this user no longer exists",
       );
-    if (user.status === UserStatus.SUSPENDED) {
-      throw new ForbiddenException(
-        "Your account is suspended. Please contact an admin.",
-      );
-    }
+    this.ensureActive(user.status);
     return { id: user.id, email: user.email, roles: [user.role] };
   }
 
@@ -125,12 +114,21 @@ export class AuthService {
       );
     }
 
-    const passwordHash = await bcrypt.hash(
-      dto.newPassword,
-      appConfig.recommended_bycrypt_rounds,
-    );
+    const passwordHash = await this.hashPassword(dto.newPassword);
     await this.usersService.setPassword(userId, passwordHash);
     this.logout(token);
     return { message: "Password changed. Please log in again." };
+  }
+
+  private hashPassword(password: string) {
+    return bcrypt.hash(password, appConfig.recommended_bycrypt_rounds);
+  }
+
+  private ensureActive(status: UserStatus) {
+    if (status === UserStatus.SUSPENDED) {
+      throw new ForbiddenException(
+        "Your account is suspended. Please contact an admin.",
+      );
+    }
   }
 }
