@@ -39,19 +39,11 @@ export class UsersService {
   }
 
   findByEmailWithPassword(email: string) {
-    return this.users
-      .createQueryBuilder("u")
-      .addSelect("u.passwordHash")
-      .where("u.email = :email", { email })
-      .getOne();
+    return this.withPassword().where("u.email = :email", { email }).getOne();
   }
 
   findByIdWithPassword(id: string) {
-    return this.users
-      .createQueryBuilder("u")
-      .addSelect("u.passwordHash")
-      .where("u.id = :id", { id })
-      .getOne();
+    return this.withPassword().where("u.id = :id", { id }).getOne();
   }
 
   async setPassword(id: string, passwordHash: string) {
@@ -102,8 +94,8 @@ export class UsersService {
     };
   }
 
-  async getOne(id: string) {
-    return this.toProfile(await this.mustFind(id));
+  getOne(id: string) {
+    return this.getProfile(id);
   }
 
   async suspend(adminId: string, id: string) {
@@ -151,6 +143,10 @@ export class UsersService {
 
   toPublic(user: User) {
     return { id: user.id, fullName: user.fullName, role: user.role };
+  }
+
+  private withPassword() {
+    return this.users.createQueryBuilder("u").addSelect("u.passwordHash");
   }
 
   private async mustFind(id: string) {
