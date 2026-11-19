@@ -5,10 +5,6 @@ import { UsersModule } from "@/modules/users/users.module";
 import { AuthController } from "@/modules/auth/auth.controller";
 import { AuthService } from "@/modules/auth/auth.service";
 
-/**
- * GLOBAL: every module can use  @UseGuards(AuthGuard)  without importing AuthModule.
- * The secret and the token life come from .env (JWT_BEARER_SECRET, JWT_TTL).
- */
 @Global()
 @Module({
   imports: [
