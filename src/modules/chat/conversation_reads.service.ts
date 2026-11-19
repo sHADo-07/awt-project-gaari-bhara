@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ConversationRead } from "@/modules/chat/entities/conversation_reads.entity";
+import { Conversation } from "@/modules/chat/entities/conversation.entity";
 import {
   CreateConversationReadDto,
   UpdateConversationReadDto,
@@ -12,76 +17,80 @@ export class ConversationReadService {
   constructor(
     @InjectRepository(ConversationRead)
     private readonly conversationReadRepository: Repository<ConversationRead>,
+    @InjectRepository(Conversation)
+    private readonly conversationRepository: Repository<Conversation>,
   ) {}
 
-  async getConversationReads() {
-    try {
-      const conversationsRead = await this.conversationReadRepository.find();
-      return conversationsRead;
-    } catch (error) {
-      throw error;
-    }
+  async getConversationReads(userId: string) {
+    const conversations = await this.getUserConversations(userId);
+    if (!conversations.length) return [];
+
+    return this.conversationReadRepository.find({
+      where: conversations.map(({ id }) => ({ conversation_id: id })),
+    });
   }
 
-  async getConversationReadById(conversation_id: string) {
-    try {
-      const conversationRead = await this.conversationReadRepository.findOne({
-        where: { conversation_id },
-      });
-      if (!conversationRead) {
-        throw new NotFoundException("Conversation read with ID not found");
-      }
-      return conversationRead;
-    } catch (error) {
-      throw error;
+  async getConversationReadById(userId: string, conversation_id: string) {
+    await this.findAccessibleConversation(userId, conversation_id);
+    const conversationRead = await this.conversationReadRepository.findOne({
+      where: { conversation_id, user_id: userId },
+    });
+    if (!conversationRead) {
+      throw new NotFoundException("Conversation read with ID not found");
     }
+    return conversationRead;
   }
 
-  async createConversationRead(dto: CreateConversationReadDto) {
-    try {
-      const conversationRead = this.conversationReadRepository.create(dto);
-      return await this.conversationReadRepository.save(conversationRead);
-    } catch (error) {
-      throw error;
-    }
+  async createConversationRead(userId: string, dto: CreateConversationReadDto) {
+    await this.findAccessibleConversation(userId, dto.conversation_id);
+    const conversationRead = this.conversationReadRepository.create({
+      ...dto,
+      user_id: userId,
+    });
+    return this.conversationReadRepository.save(conversationRead);
   }
 
   async updateConversationRead(
+    userId: string,
     conversation_id: string,
     dto: UpdateConversationReadDto,
   ) {
-    try {
-      if (!conversation_id) {
-        throw new NotFoundException("Message with ID not found");
-      }
-      const conversationRead = await this.conversationReadRepository.findOne({
-        where: { conversation_id },
-      });
-      if (!conversationRead) {
-        throw new NotFoundException("Message with ID not found");
-      }
-      Object.assign(conversationRead, dto);
-      const { conversation_id: uid, ...rest } = conversationRead;
-      return await this.conversationReadRepository.update(
-        { conversation_id: uid },
-        rest,
-      );
-    } catch (error) {
-      throw error;
-    }
+    const conversationRead = await this.getConversationReadById(
+      userId,
+      conversation_id,
+    );
+    Object.assign(conversationRead, dto);
+    return this.conversationReadRepository.save(conversationRead);
   }
 
-  async deleteConversationRead(conversation_id: string) {
-    try {
-      const conversationRead = await this.conversationReadRepository.findOne({
-        where: { conversation_id },
-      });
-      if (!conversationRead) {
-        throw new NotFoundException("Conversation read with ID not found");
-      }
-      return await this.conversationReadRepository.delete({ conversation_id });
-    } catch (error) {
-      throw error;
+  async deleteConversationRead(userId: string, conversation_id: string) {
+    const conversationRead = await this.getConversationReadById(
+      userId,
+      conversation_id,
+    );
+    return this.conversationReadRepository.delete({
+      conversation_id: conversationRead.conversation_id,
+    });
+  }
+
+  private getUserConversations(userId: string) {
+    return this.conversationRepository.find({
+      where: [{ user_low_id: userId }, { user_high_id: userId }],
+    });
+  }
+
+  private async findAccessibleConversation(userId: string, id: string) {
+    const conversation = await this.conversationRepository.findOne({
+      where: [
+        { id, user_low_id: userId },
+        { id, user_high_id: userId },
+      ],
+    });
+    if (!conversation) {
+      throw new ForbiddenException(
+        "You are not a participant in this conversation",
+      );
     }
+    return conversation;
   }
 }
