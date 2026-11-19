@@ -4,10 +4,6 @@ import * as dotenv from "dotenv";
 import { fromZodError } from "zod-validation-error";
 dotenv.config();
 
-/**
- * All settings come from the environment (.env). The app checks them at start-up
- * and stops with a clear message if one is missing or wrong.
- */
 export const envSchema = z
   .object({
     REDIS_HOST: z.string().default("localhost"),
@@ -20,12 +16,14 @@ export const envSchema = z
     LOG_FILE: z.coerce.boolean().default(true),
     JWT_BEARER_SECRET: z.string().min(16, "must be at least 16 characters"),
     AUTH_SERVER_AUDIENCE: z.string().optional(),
-    // Token life in seconds. The default is one hour.
+
     JWT_TTL: z.coerce.number().default(3600),
     PORT: z.coerce.number().default(5000),
-    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
     APP_ENV: z.enum(["local", "dev", "prod"]).default("local"),
-    // Email. MAILER_HOST can be empty: then emails are only written in the log.
+
     MAILER_HOST: z.string().default(""),
     MAILER_PORT: z.coerce.number().default(2525),
     MAILER_SECURE: z.coerce.boolean().default(false),
@@ -53,7 +51,7 @@ const env = (() => {
             try {
               if (val) return JSON.parse(val);
               return val;
-            } catch (error) {
+            } catch {
               return val;
             }
           })(),
@@ -61,7 +59,7 @@ const env = (() => {
         {},
       ),
     );
-  } catch (error) {
+  } catch {
     if (error instanceof ZodError)
       throw new Error(`ENV ${fromZodError(error).message}`);
     else throw new Error(`ENV ${error}`);
