@@ -25,11 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
-      const body = exception.getResponse();
-      message =
-        typeof body === "string"
-          ? body
-          : ((body as any).message ?? exception.message);
+      message = this.messageOf(exception);
     } else if (exception instanceof QueryFailedError) {
       const known = this.fromDatabaseError(exception);
       if (known) {
@@ -49,6 +45,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path: req.originalUrl.split("?")[0],
       timestamp: new Date().toISOString(),
     });
+  }
+
+  private messageOf(exception: HttpException): string | string[] {
+    const body = exception.getResponse();
+    if (typeof body === "string") return body;
+    return (
+      (body as { message?: string | string[] }).message ?? exception.message
+    );
   }
 
   private fromDatabaseError(error: QueryFailedError) {
