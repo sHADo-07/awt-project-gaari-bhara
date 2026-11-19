@@ -1,4 +1,13 @@
-import { Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Query, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { AuthGuard, RolesGuard } from "@/common/guard";
 import { CurrentUser, Roles } from "@/common/decorators";
@@ -28,8 +37,13 @@ export class AdminUsersController {
   }
 
   @Patch(":id/suspend")
-  @ApiOperation({ summary: "Suspend a user. They can no longer log in or use the API." })
-  suspend(@CurrentUser() admin: AuthUser, @Param("id", ParseUUIDPipe) id: string) {
+  @ApiOperation({
+    summary: "Suspend a user. They can no longer log in or use the API.",
+  })
+  suspend(
+    @CurrentUser() admin: AuthUser,
+    @Param("id", ParseUUIDPipe) id: string,
+  ) {
     return this.usersService.suspend(admin.id, id);
   }
 
@@ -41,7 +55,10 @@ export class AdminUsersController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Delete a user with no records (otherwise 409)" })
-  remove(@CurrentUser() admin: AuthUser, @Param("id", ParseUUIDPipe) id: string) {
+  remove(
+    @CurrentUser() admin: AuthUser,
+    @Param("id", ParseUUIDPipe) id: string,
+  ) {
     return this.usersService.remove(admin.id, id);
   }
 }
