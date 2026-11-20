@@ -14,6 +14,9 @@ import { RentStatus } from "@/modules/rent/rent.constants";
 const UUID_PATTERN =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
+// Only the format YYYY-MM-DD is allowed, for example 2026-12-05
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
 export class CreateRentDto {
   @ApiProperty({ description: "UUID of the post" })
   @IsString()
@@ -21,30 +24,14 @@ export class CreateRentDto {
   @Matches(UUID_PATTERN, { message: "Invalid post ID format" })
   post_id!: string;
 
-  @ApiProperty({ description: "UUID of the vehicle owner" })
-  @IsString()
-  @IsNotEmpty({ message: "No owner ID provided" })
-  @Matches(UUID_PATTERN, { message: "Invalid owner ID format" })
-  owner_id!: string;
-
-  @ApiProperty({ description: "UUID of the renter" })
-  @IsString()
-  @IsNotEmpty({ message: "No renter ID provided" })
-  @Matches(UUID_PATTERN, { message: "Invalid renter ID format" })
-  renter_id!: string;
-
-  @ApiProperty({ description: "UUID of the user starting the rent" })
-  @IsString()
-  @IsNotEmpty({ message: "No starter ID provided" })
-  @Matches(UUID_PATTERN, { message: "Invalid starter ID format" })
-  started_by!: string;
-
   @ApiProperty({ description: "First rental day", example: "2026-12-01" })
   @IsDateString({ strict: true })
+  @Matches(DATE_ONLY, { message: "start_date must be in the format YYYY-MM-DD" })
   start_date!: string;
 
   @ApiProperty({ description: "Last rental day", example: "2026-12-05" })
   @IsDateString({ strict: true })
+  @Matches(DATE_ONLY, { message: "end_date must be in the format YYYY-MM-DD" })
   end_date!: string;
 
   @ApiPropertyOptional({ description: "Agreed price in poisha", minimum: 0 })
@@ -52,11 +39,6 @@ export class CreateRentDto {
   @IsInt()
   @Min(0)
   agreed_price?: number;
-
-  @ApiPropertyOptional({ enum: RentStatus, default: RentStatus.PENDING })
-  @IsOptional()
-  @IsEnum(RentStatus)
-  status?: RentStatus;
 }
 
 export class UpdateRentDto {
