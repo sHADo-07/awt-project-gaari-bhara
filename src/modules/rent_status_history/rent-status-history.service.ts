@@ -11,17 +11,17 @@ import { RentStatusHistory } from "@/modules/rent_status_history/entities/rent-s
 export class RentStatusHistoryService {
   constructor(
     @InjectRepository(RentStatusHistory)
-    private readonly rentStatusHistoryRepository: Repository<RentStatusHistory>,
+    private readonly historyRepository: Repository<RentStatusHistory>,
   ) {}
 
-  async getRentStatusHistories() {
-    return this.rentStatusHistoryRepository.find({
+  getRentStatusHistories() {
+    return this.historyRepository.find({
       order: { id: "ASC" },
     });
   }
 
   async getRentStatusHistoryById(id: string) {
-    const history = await this.rentStatusHistoryRepository.findOne({
+    const history = await this.historyRepository.findOne({
       where: { id },
     });
     if (!history) {
@@ -30,26 +30,29 @@ export class RentStatusHistoryService {
     return history;
   }
 
-  async getRentStatusHistoryByRentId(rentId: string) {
-    return this.rentStatusHistoryRepository.find({
+  getRentStatusHistoryByRentId(rentId: string) {
+    return this.historyRepository.find({
       where: { rent_id: rentId },
       order: { id: "ASC" },
     });
   }
 
   async createRentStatusHistory(dto: CreateRentStatusHistoryDto) {
-    const history = this.rentStatusHistoryRepository.create(dto);
-    return this.rentStatusHistoryRepository.save(history);
+    const history = this.historyRepository.create(dto);
+    return this.historyRepository.save(history);
   }
 
-  async updateRentStatusHistory(id: string, dto: UpdateRentStatusHistoryDto) {
+  async updateRentStatusHistory(
+    id: string,
+    dto: UpdateRentStatusHistoryDto,
+  ) {
     const history = await this.getRentStatusHistoryById(id);
     Object.assign(history, dto);
-    return this.rentStatusHistoryRepository.save(history);
+    return this.historyRepository.save(history);
   }
 
   async deleteRentStatusHistory(id: string) {
     await this.getRentStatusHistoryById(id);
-    return this.rentStatusHistoryRepository.delete({ id });
+    return this.historyRepository.delete({ id });
   }
 }
